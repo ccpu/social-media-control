@@ -1,4 +1,4 @@
-# Contributing to chrome-extension-monorepo-template
+# Contributing to social-media-control
 
 Thank you for your interest in contributing! 🎉
 
