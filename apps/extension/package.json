@@ -1,0 +1,51 @@
+{
+  "name": "extension",
+  "displayName": "Social Media Control",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Adds video controls and auto-scroll to social media sites.",
+  "author": "Mo Doaie <m.doaie@hotmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/ccpu/social-media-control",
+  "scripts": {
+    "build": "tsx scripts/build.ts",
+    "icons": "tsx scripts/generateIcons.ts",
+    "start:chromium": "web-ext run --target chromium --source-dir ./dist/chrome --start-url https://www.instagram.com",
+    "start:firefox": "web-ext run --target firefox-desktop --source-dir ./dist/firefox --start-url https://www.instagram.com",
+    "clean": "git clean -xdf .cache .turbo dist",
+    "clean:all": "git clean -xdf .cache .turbo dist node_modules",
+    "format": "prettier --check . --ignore-path ../../.gitignore --ignore-path ../../.prettierignore",
+    "format:fix": "prettier --write . --ignore-path ../../.gitignore --ignore-path ../../.prettierignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest --run",
+    "test:watch": "vitest --watch"
+  },
+  "dependencies": {
+    "@internal/core": "workspace:*",
+    "@internal/site-facebook": "workspace:*",
+    "@internal/site-instagram": "workspace:*"
+  },
+  "devDependencies": {
+    "@internal/eslint-config": "workspace:*",
+    "@internal/prettier-config": "workspace:*",
+    "@internal/tsconfig": "workspace:*",
+    "@internal/vitest-config": "workspace:*",
+    "@resvg/resvg-js": "^2.6.2",
+    "@testing-library/jest-dom": "catalog:dev",
+    "@types/archiver": "^6.0.3",
+    "@types/chrome": "catalog:dev",
+    "@types/firefox-webext-browser": "catalog:dev",
+    "@types/node": "catalog:dev",
+    "archiver": "^7.0.1",
+    "eslint": "catalog:dev",
+    "prettier": "catalog:dev",
+    "tsx": "^4.20.6",
+    "typescript": "catalog:dev",
+    "vite": "catalog:dev",
+    "vitest": "catalog:dev",
+    "web-ext": "^10.7.0"
+  },
+  "prettier": "@internal/prettier-config"
+}

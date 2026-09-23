@@ -1,0 +1,182 @@
+import type { VideoPlayer } from '../videoPlayer';
+import { Settings } from '@internal/core';
+import { VideoType } from '../videoType';
+
+// Base class for video the different controllers.
+export abstract class VideoController {
+  public constructor(videoPlayer: VideoPlayer) {
+    this.videoPlayer = videoPlayer;
+  }
+
+  // The video player.
+  public readonly videoPlayer: VideoPlayer;
+
+  // Shortcut to the video element.
+  public get videoElement(): HTMLVideoElement | undefined {
+    return this.videoPlayer.videoElementRef?.deref();
+  }
+
+  // #region Control
+
+  // Creates the video controller.
+  public abstract create(): void;
+
+  // The main control background element.
+  protected videoControlElement: HTMLElement | undefined;
+
+  // Create the control background.
+  protected createVideoControlBackground(): void {
+    const videoRootElement = this.videoPlayer.videoRootElementRef?.deref();
+    if (!videoRootElement) return;
+
+    this.videoControlElement = document.createElement('div');
+    this.videoControlElement.classList.add('smc-controls');
+    if (this.videoPlayer.videoType === VideoType.reel) {
+      this.videoControlElement.classList.add('smc-reel');
+    } else if (this.videoPlayer.videoType === VideoType.story) {
+      this.videoControlElement.classList.add('smc-story');
+    }
+    videoRootElement.appendChild(this.videoControlElement);
+
+    // Disable the video click event and not redirect to the post url on interaction.
+    if (this.videoElement) {
+      this.videoElement.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+      });
+    }
+  }
+
+  // Adjust the control bar height for the background and all native elements.
+  protected adjustVideoControlHeight(controlHeight: number): void {
+    // Removes the height of the controls from the inner overlay to not block mouse clicks.
+
+    // Adjusting the controller background.
+    if (this.videoControlElement) {
+      this.videoControlElement.style.height = `${controlHeight}px`;
+    }
+
+    // Containing the whole video for fullscreen. Instagram's default is 'cover'.
+    const nativeVideoPlayer = this.videoPlayer.videoElementRef?.deref();
+    if (nativeVideoPlayer) {
+      nativeVideoPlayer.style.objectFit = 'contain';
+    }
+
+    // Prevent the root element from catching pointer events
+    const nativeElement = this.videoPlayer.videoRootElementRef?.deref();
+    if (nativeElement) {
+      nativeElement.style.pointerEvents = 'none';
+    }
+
+    // Adjust the overlay margin
+    const nativeOverlayElement =
+      this.videoPlayer.nativeOverlayElementRef?.deref()?.parentElement;
+    if (nativeOverlayElement) {
+      if (this.videoPlayer.videoType === VideoType.reel) {
+        nativeOverlayElement.style.position = 'relative';
+      }
+      nativeOverlayElement.style.height = `calc(100% - ${controlHeight}px)`;
+    }
+
+    // Remove click handler from story player
+    const storyPlayerElement = this.videoPlayer.storyMediaPlayerElementRef?.deref();
+    if (storyPlayerElement) {
+      storyPlayerElement.style.pointerEvents = 'none';
+    }
+
+    // Adjust the comment section for Stories.
+    const storyFooterElement = this.videoPlayer.storyFooterElementRef?.deref();
+    if (storyFooterElement) {
+      storyFooterElement.style.marginBottom = `${controlHeight}px`;
+    }
+
+    // Hide the native mute button.
+    const nativeVolumeControlElement =
+      this.videoPlayer.nativeVolumeControlElementRef?.deref();
+    if (nativeVolumeControlElement) {
+      nativeVolumeControlElement.style.display = 'none';
+    }
+  }
+
+  // Removes the video controls
+  public remove(): void {
+    if (!this.videoElement) return;
+
+    // Remove controls
+    this.videoElement.controls = false;
+
+    if (this.videoControlElement) {
+      this.videoControlElement.remove();
+      this.videoControlElement = undefined;
+    }
+
+    // Resets the overlay margins
+    const nativeOverlayElement =
+      this.videoPlayer.nativeOverlayElementRef?.deref()?.parentElement;
+    if (nativeOverlayElement) {
+      if (this.videoPlayer.videoType === VideoType.reel) {
+        nativeOverlayElement.style.position = '';
+      }
+      nativeOverlayElement.style.height = '100%';
+    }
+
+    // Restore the comment section for Stories.
+    const storyFooterElement = this.videoPlayer.storyFooterElementRef?.deref();
+    if (storyFooterElement) {
+      storyFooterElement.style.marginBottom = ``;
+    }
+
+    // Restore original mute button
+    const nativeVolumeControlElement =
+      this.videoPlayer.nativeVolumeControlElementRef?.deref();
+    if (nativeVolumeControlElement) {
+      nativeVolumeControlElement.style.display = '';
+    }
+  }
+
+  // #endregion Control
+
+  // #region Events
+
+  public abstract onPlay(): void;
+  public abstract onPause(): void;
+  public abstract onTimeUpdate(): void;
+  public abstract onVolumeChange(): void;
+  public abstract onPlaybackSpeedChange(): void;
+  public abstract onFullscreenChange(): void;
+  public abstract onPictureInPictureChange(): void;
+
+  // The extension settings were changed.
+  public abstract onUpdateSettings(): void;
+
+  // #endregion Events
+
+  // #region Hover
+
+  // Mouse is hovering the player element.
+  private hover: boolean = false;
+
+  public setHover(hover: boolean): void {
+    this.hover = hover;
+    this.updateControlBarVisibility();
+  }
+
+  protected updateControlBarVisibility(): void {
+    const visibility = !Settings.shared.autoHideControlBar || this.hover;
+    this.setVisibility(visibility);
+  }
+
+  // Sets the control visibility.
+  protected abstract setVisibility(visibility: boolean): void;
+
+  // #endregion Hover
+
+  // #region Utils
+
+  // Changes the visibility of a control element.
+  public static setElementVisibility(element: HTMLElement, visible: boolean): void {
+    // eslint-disable-next-line no-param-reassign -- Toggling the style of the given element is the purpose.
+    element.style.display = visible ? 'block' : 'none';
+  }
+
+  // #endregion Utils
+}

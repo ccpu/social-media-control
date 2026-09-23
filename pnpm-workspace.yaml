@@ -8,6 +8,7 @@ catalogs:
     "@tailwindcss/vite": ^4.1.14
     "@testing-library/jest-dom": ^6.9.1
     "@types/chrome": ^0.1.22
+    '@types/firefox-webext-browser': ^120.0.4
     "@vitejs/plugin-react": ^5.0.4
     '@babel/core': ^7.28.4
     '@pixpilot/dev-config': ^3.1.1

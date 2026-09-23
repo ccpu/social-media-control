@@ -9,10 +9,10 @@ Summary
   5. version timestamp follow the yyyy.MM.dd format
 ```
 
-## 1.0.0 [2025.09.06]
+## 1.0.0 [2026.09.23]
 
-- feat: Chrome extension template with Vite + React + TypeScript
-- feat: Tailwind CSS v4 integration with custom theme
-- feat: Modern development tooling (ESLint, Prettier)
-- feat: Hot module replacement for development
-- feat: Based on [create-chrome-ext](https://github.com/guocaoyi/create-chrome-ext)
+- feat: Instagram video controls and playback settings, based on [Video Control for Instagram](https://github.com/Arcus92/instagram-video-control) 1.9.3
+- feat: Auto-scroll to the next reel on Instagram Reels and Facebook Reels
+- feat: One package per site, composed by the extension app
+- feat: New icon
+- chore: Vite builds for Chrome (Manifest V3) and Firefox (Manifest V2), Vitest for tests

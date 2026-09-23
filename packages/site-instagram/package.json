@@ -1,0 +1,42 @@
+{
+  "name": "@internal/site-instagram",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Instagram support: custom video controls, playback settings and auto-scroll on Reels.",
+  "license": "MIT",
+  "exports": {
+    "./site": "./src/site.ts",
+    "./page": "./src/page.ts",
+    "./content": "./src/content.ts",
+    "./styles.css": "./src/styles/instagram.css"
+  },
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist",
+    "clean:all": "git clean -xdf .cache .turbo dist node_modules",
+    "format": "prettier --check . --ignore-path ../../.gitignore --ignore-path ../../.prettierignore",
+    "format:fix": "prettier --write . --ignore-path ../../.gitignore --ignore-path ../../.prettierignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest --run --passWithNoTests",
+    "test:watch": "vitest --watch"
+  },
+  "dependencies": {
+    "@internal/core": "workspace:*",
+    "@internal/react-fiber": "workspace:*"
+  },
+  "devDependencies": {
+    "@internal/eslint-config": "workspace:*",
+    "@internal/prettier-config": "workspace:*",
+    "@internal/tsconfig": "workspace:*",
+    "@internal/vitest-config": "workspace:*",
+    "@testing-library/jest-dom": "catalog:dev",
+    "@types/chrome": "catalog:dev",
+    "@types/firefox-webext-browser": "catalog:dev",
+    "eslint": "catalog:dev",
+    "prettier": "catalog:dev",
+    "typescript": "catalog:dev",
+    "vitest": "catalog:dev"
+  },
+  "prettier": "@internal/prettier-config"
+}

@@ -1,0 +1,32 @@
+import { Resources } from '../../../resources';
+import { VideoControllerButton } from './videoControllerButton';
+
+export class MuteButton extends VideoControllerButton {
+  override updateControl(): void {
+    const isMuted = Boolean(this.videoElement?.muted);
+    this.setIcon(
+      isMuted
+        ? Resources.shared.urls.images.speakerOff
+        : Resources.shared.urls.images.speakerOn,
+    );
+    this.setTitle(
+      isMuted
+        ? Resources.shared.locales.unmuteTooltip
+        : Resources.shared.locales.muteTooltip,
+    );
+  }
+
+  override onClick(): void {
+    if (!this.videoElement) return;
+    this.videoElement.muted = !this.videoElement.muted;
+
+    // Fallback when volume is still set to zero
+    if (!this.videoElement.muted && this.videoElement.volume === 0) {
+      this.videoElement.volume = 0.1;
+    }
+  }
+
+  override onVolumeChange(): void {
+    this.updateControl();
+  }
+}

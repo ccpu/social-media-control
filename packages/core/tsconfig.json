@@ -1,0 +1,16 @@
+{
+  "extends": "@internal/tsconfig/base.json",
+  "compilerOptions": {
+    "types": [
+      "chrome",
+      "firefox-webext-browser",
+      "vitest/globals",
+      "@testing-library/jest-dom"
+    ]
+  },
+  "include": [
+    "src",
+    "test",
+    "*.config.ts"
+  ]
+}

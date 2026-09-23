@@ -3,7 +3,7 @@
   "private": true,
   "packageManager": "pnpm@10.18.0",
   "prettier": "@internal/prettier-config",
-  "description": "A production-ready Chrome extension monorepo template with TypeScript, Vite, Turborepo, and modern tooling for fast development.",
+  "description": "Browser extension that adds video controls and auto-scroll to social media sites (Instagram, Facebook).",
   "author": "Mo Doaie <m.doaie@hotmail.com>",
   "license": "MIT",
   "homepage": "https://github.com/ccpu/social-media-control",
@@ -15,13 +15,14 @@
     "url": "https://github.com/ccpu/social-media-control/issues"
   },
   "keywords": [
+    "browser-extension",
     "chrome-extension",
-    "monorepo",
-    "typescript",
-    "vite",
-    "turborepo",
-    "template",
-    "manifest-v3"
+    "firefox-addon",
+    "instagram",
+    "facebook",
+    "reels",
+    "video-controls",
+    "monorepo"
   ],
   "engines": {
     "node": ">=22.14.0",

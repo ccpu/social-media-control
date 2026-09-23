@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="128" y2="128" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3b82f6"/>
+      <stop offset="0.5" stop-color="#8b5cf6"/>
+      <stop offset="1" stop-color="#ec4899"/>
+    </linearGradient>
+    <radialGradient id="shine" cx="32" cy="16" r="96" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Tile -->
+  <rect width="128" height="128" rx="30" fill="url(#background)"/>
+  <rect width="128" height="128" rx="30" fill="url(#shine)"/>
+
+  <!-- Play button: video controls -->
+  <path d="M52 26 L52 66 L86 46 Z" fill="#ffffff" stroke="#ffffff" stroke-width="12" stroke-linejoin="round"/>
+
+  <!-- Chevron: auto-scroll to the next video -->
+  <path d="M42 86 L64 104 L86 86" fill="none" stroke="#ffffff" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.92"/>
+</svg>

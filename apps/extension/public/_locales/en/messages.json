@@ -1,0 +1,131 @@
+{
+  "extension_name": {
+    "message": "Social Media Control"
+  },
+  "extension_description": {
+    "message": "Adds video controls and auto-scroll to Instagram and Facebook."
+  },
+  "settings": {
+    "message": "Settings"
+  },
+  "control_settings": {
+    "message": "Video controls (Instagram)"
+  },
+  "playback_settings": {
+    "message": "Playback (Instagram)"
+  },
+  "auto_scroll_settings": {
+    "message": "Auto-scroll"
+  },
+  "option_show_time_code": {
+    "message": "Show time code"
+  },
+  "option_show_fullscreen": {
+    "message": "Show fullscreen button"
+  },
+  "option_show_playback_speed": {
+    "message": "Show playback speed control"
+  },
+  "option_show_picture_in_picture": {
+    "message": "Show Picture-in-Picture button"
+  },
+  "option_show_download": {
+    "message": "Show download button"
+  },
+  "option_video_control_mode": {
+    "message": "Controls"
+  },
+  "option_use_custom_controls": {
+    "message": "Custom video controls"
+  },
+  "option_use_browser_controls": {
+    "message": "Native browser controls"
+  },
+  "option_do_not_use_controls": {
+    "message": "No video controls (Instagram native)"
+  },
+  "option_autoplay_mode": {
+    "message": "Autoplay"
+  },
+  "option_autoplay_muted": {
+    "message": "Autoplay without audio (Instagram default)"
+  },
+  "option_autoplay_unmuted": {
+    "message": "Autoplay with audio"
+  },
+  "option_autoplay_stopped": {
+    "message": "Autoplay disabled"
+  },
+  "option_auto_hide_control_bar": {
+    "message": "Hide control bar"
+  },
+  "option_auto_unmute_playback_hint": {
+    "message": "Please allow autoplay with audio in your browser's website settings:"
+  },
+  "enable_autoplay_in_step_1": {
+    "message": "Goto Instagram.com."
+  },
+  "enable_autoplay_in_step_2": {
+    "message": "Click the website settings icon in the url bar."
+  },
+  "enable_autoplay_in_step_3_firefox": {
+    "message": "Select 'Allow Audio and Video' as Autoplay option."
+  },
+  "enable_autoplay_in_step_3_chrome": {
+    "message": "Click 'Site settings'."
+  },
+  "enable_autoplay_in_step_4_chrome": {
+    "message": "Scroll to 'Sound' and select 'Allow'."
+  },
+  "option_loop_playback": {
+    "message": "Loop videos"
+  },
+  "option_advance_on_video_end": {
+    "message": "Scroll to the next reel when playback ends"
+  },
+  "option_advance_on_video_end_hint": {
+    "message": "Works on Instagram Reels and Facebook Reels."
+  },
+  "experimental_settings": {
+    "message": "Experimental settings"
+  },
+  "option_warning_reload_required": {
+    "message": "(reload required)"
+  },
+  "view_on_github": {
+    "message": "View on GitHub"
+  },
+  "report_an_issue": {
+    "message": "Report an Issue"
+  },
+  "play_tooltip": {
+    "message": "Play"
+  },
+  "pause_tooltip": {
+    "message": "Pause"
+  },
+  "mute_tooltip": {
+    "message": "Mute audio"
+  },
+  "unmute_tooltip": {
+    "message": "Unmute audio"
+  },
+  "playback_speed_tooltip": {
+    "message": "Change playback speed"
+  },
+  "enter_fullscreen_tooltip": {
+    "message": "Enter fullscreen mode"
+  },
+  "leave_fullscreen_tooltip": {
+    "message": "Leave fullscreen mode"
+  },
+  "enter_picture_in_picture_tooltip": {
+    "message": "Enter picture-in-picture mode"
+  },
+  "leave_picture_in_picture_tooltip": {
+    "message": "Leave picture-in-picture mode"
+  },
+  "download_tooltip": {
+    "message": "Download this video"
+  }
+}
