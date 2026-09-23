@@ -25,7 +25,12 @@
   "dependencies": {
     "@internal/core": "workspace:*",
     "@internal/site-facebook": "workspace:*",
-    "@internal/site-instagram": "workspace:*"
+    "@internal/site-instagram": "workspace:*",
+    "@internal/tailwind": "workspace:*",
+    "@pixpilot/shadcn": "catalog:prod",
+    "@pixpilot/shadcn-ui": "catalog:prod",
+    "react": "catalog:prod",
+    "react-dom": "catalog:prod"
   },
   "devDependencies": {
     "@internal/eslint-config": "workspace:*",
@@ -33,14 +38,19 @@
     "@internal/tsconfig": "workspace:*",
     "@internal/vitest-config": "workspace:*",
     "@resvg/resvg-js": "^2.6.2",
+    "@tailwindcss/vite": "catalog:dev",
     "@testing-library/jest-dom": "catalog:dev",
     "@types/archiver": "^6.0.3",
     "@types/chrome": "catalog:dev",
     "@types/firefox-webext-browser": "catalog:dev",
     "@types/node": "catalog:dev",
+    "@types/react": "catalog:dev",
+    "@types/react-dom": "catalog:dev",
+    "@vitejs/plugin-react": "catalog:dev",
     "archiver": "^7.0.1",
     "eslint": "catalog:dev",
     "prettier": "catalog:dev",
+    "tailwindcss": "catalog:dev",
     "tsx": "^4.20.6",
     "typescript": "catalog:dev",
     "vite": "catalog:dev",

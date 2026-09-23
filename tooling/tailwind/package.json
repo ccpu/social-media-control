@@ -32,7 +32,8 @@
     "format": "prettier --check . --ignore-path ../../.gitignore --ignore-path ../../.prettierignore"
   },
   "dependencies": {
-    "tailwindcss": "^4.1.14"
+    "tailwindcss": "catalog:dev",
+    "tw-animate-css": "catalog:dev"
   },
   "devDependencies": {
     "@internal/eslint-config": "workspace:*",

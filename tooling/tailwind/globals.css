@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import 'tw-animate-css';
 @source "../../packages/**/*.{js,ts,jsx,tsx}";
 
 /* Configure dark mode variant for Tailwind v4 with class-based theming */
@@ -12,6 +13,8 @@
   --color-muted-foreground: #737373;
   --color-card: #ffffff;
   --color-card-foreground: #171717;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #171717;
   --color-border: #e5e5e5;
   --color-input: #e5e5e5;
   --color-primary: #171717;
@@ -25,6 +28,7 @@
   --color-ring: #171717;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --radius: 0.5rem;
 }
 
 /* Dark theme colors */
@@ -35,6 +39,8 @@
   --color-muted-foreground: #a3a3a3;
   --color-card: #171717;
   --color-card-foreground: #ededed;
+  --color-popover: #171717;
+  --color-popover-foreground: #ededed;
   --color-border: #262626;
   --color-input: #262626;
   --color-primary: #ededed;
@@ -57,8 +63,22 @@
   color-scheme: dark;
 }
 
-/* Global styles */
-body {
-  background-color: var(--color-background);
-  color: var(--color-foreground);
+/* shadcn/ui assumes these defaults are applied to every element. */
+@layer base {
+  * {
+    border-color: var(--color-border);
+    outline-color: color-mix(in oklab, var(--color-ring) 50%, transparent);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family:
+      ui-sans-serif,
+      system-ui,
+      -apple-system,
+      'Segoe UI',
+      Roboto,
+      sans-serif;
+  }
 }

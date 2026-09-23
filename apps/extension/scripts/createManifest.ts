@@ -44,7 +44,9 @@ export function createManifest(
     content_scripts: sites.flatMap((site) => createContentScripts(site)),
     permissions: ['storage'],
   };
-  const sitesWithResources = sites.filter((site) => site.webAccessibleResources?.length);
+  const sitesWithResources = sites.filter(
+    (site) => (site.webAccessibleResources?.length ?? 0) > 0,
+  );
 
   if (target === 'chrome') {
     return {
@@ -76,7 +78,10 @@ function createContentScripts(site: SiteDefinition): Record<string, unknown>[] {
   return site.scripts.map((script) => ({
     matches: site.matches,
     js: [bundleFileName(site, script)],
-    ...(script.css?.length && { css: script.css.map((css) => styleFileName(site, css)) }),
+    ...(script.css &&
+      script.css.length > 0 && {
+        css: script.css.map((css) => styleFileName(site, css)),
+      }),
     ...(script.runAt && { run_at: script.runAt }),
     ...(script.allFrames && { all_frames: true }),
     ...(script.world && { world: script.world }),

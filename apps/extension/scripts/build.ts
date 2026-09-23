@@ -9,6 +9,8 @@ import {
 } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import tailwindcss from '@tailwindcss/vite';
+import react from '@vitejs/plugin-react';
 
 import { sites } from '../src/sites';
 import { bundleScript } from './bundleScript';
@@ -48,7 +50,10 @@ for (const site of sites) {
     );
   }
 }
-await bundleScript(join(appDir, 'src/popup/main.ts'), bundleDir, 'js/popup.js');
+await bundleScript(join(appDir, 'src/popup/main.tsx'), bundleDir, 'js/popup.js', {
+  plugins: [react(), tailwindcss()],
+  cssFileName: 'styles/popup',
+});
 
 for (const target of targets) {
   const targetDir = join(distDir, target);

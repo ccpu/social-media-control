@@ -1,0 +1,6 @@
+@import '@internal/tailwind/globals.css';
+
+/* `@pixpilot/shadcn*` ship compiled JS, so their utility classes are only found
+   when Tailwind is pointed at the installed packages. */
+@source '../../node_modules/@pixpilot/shadcn/dist';
+@source '../../node_modules/@pixpilot/shadcn-ui/dist';
