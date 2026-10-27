@@ -11,7 +11,7 @@ export interface ReactDevToolsHook {
   /**
    * The initial injection callback.
    */
-  inject?: (renderer: unknown) => void;
+  inject?: (renderer: unknown) => unknown;
 
   /**
    * Event when a fiber is rendered / updated.

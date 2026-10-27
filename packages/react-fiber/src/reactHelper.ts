@@ -30,7 +30,9 @@ export class ReactHelper {
   }
 
   /**
-   * Returns the DOM element of the given fiber node.
+   * Returns the first DOM element rendered by the given fiber node.
+   * Searches all children, since the first child may render nothing. Portals are skipped, their elements live
+   * elsewhere in the DOM.
    * @param fiber The fiber node.
    */
   public static getNodeFromFiber(fiber?: ReactFiber): HTMLElement | undefined {
@@ -38,7 +40,13 @@ export class ReactHelper {
     if (fiber.stateNode instanceof HTMLElement) {
       return fiber.stateNode;
     }
-    if (fiber.child) return this.getNodeFromFiber(fiber.child);
+    let { child } = fiber;
+    while (child) {
+      const node =
+        child.tag === ReactTag.HostPortal ? undefined : this.getNodeFromFiber(child);
+      if (node) return node;
+      child = child.sibling;
+    }
     return undefined;
   }
 

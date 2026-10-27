@@ -1,24 +1,40 @@
 import type { SettingsData } from '@internal/core';
 import type { ReactDevToolsHook, ReactFiber, ReactRoot } from '@internal/react-fiber';
 import type { PlaybackManager } from './playbackManager';
-import { Settings, VideoAutoplayMode, Viewport } from '@internal/core';
+import { VideoAutoplayMode, Viewport } from '@internal/core';
 import { ReactDevTools, ReactFlags, ReactHelper, ReactTag } from '@internal/react-fiber';
 import { Resources } from '../resources';
+import { instagramSettings } from '../settings';
 import { VideoPlayer } from './videoPlayer';
 import { VideoType } from './videoType';
+
+// How often and how long to look for the player of a newly rendered video (2 seconds in total).
+const ATTACH_RETRY_DELAY_MS = 100;
+const ATTACH_MAX_ATTEMPTS = 20;
 
 // Detects changes of <video> tags and attaches the custom video players to the Instagram page.
 export class VideoDetector implements PlaybackManager {
   // The extension settings.
-  private readonly settings = Settings.shared;
+  private readonly settings = instagramSettings;
 
   // List of all video players by source element.
   private videoPlayersByElement = new WeakMap<HTMLElement, VideoPlayer>();
   private videoPlayers: VideoPlayer[] = [];
 
+  // Is the extension initialized (settings and resources received)?
+  private initialized: boolean = false;
+
+  // Videos detected before the extension was initialized. They are attached once it is.
+  private pendingVideos: { polarisFiber: ReactFiber; videoElement: HTMLVideoElement }[] =
+    [];
+
   // Initialize the video detector.
   public async init(): Promise<void> {
     this.startMessageHandling();
+
+    // React only picks up the DevTools hook while it loads, which is usually before the content script has read the
+    // settings. Registering it later would miss every video, so it is registered right away.
+    this.registerReactHooks();
   }
 
   // #region Messaging
@@ -49,8 +65,19 @@ export class VideoDetector implements PlaybackManager {
     }
   }
 
+  // Asks the content script to store settings changed on the page. The page has no access to the extension storage.
+  private sendMessageStoreSettings(data: Partial<SettingsData>) {
+    window.postMessage({
+      type: 'smc-instagram-store-settings',
+      data,
+    });
+  }
+
   // The extension was initialized.
   private onInitialized() {
+    if (this.initialized) return;
+    this.initialized = true;
+
     // If the user really want's to unmute the videos on page-load, we let him do that.
     if (this.settings.autoplayMode === VideoAutoplayMode.unmuted) {
       this.checkAndEnableAutoplayWithAudio();
@@ -60,10 +87,16 @@ export class VideoDetector implements PlaybackManager {
       this.lastPlaybackMuted = false;
     }
 
-    this.registerReactHooks();
-
     // Listen to setting changes.
     this.settings.changed.subscribe((name) => this.onSettingChanged(name));
+
+    // Attach the videos that were rendered while waiting for the extension.
+    const { pendingVideos } = this;
+    this.pendingVideos = [];
+    for (const { polarisFiber, videoElement } of pendingVideos) {
+      if (videoElement.isConnected)
+        this.tryAttachPolarisVideo(polarisFiber, videoElement);
+    }
   }
 
   // #region Messaging
@@ -96,16 +129,7 @@ export class VideoDetector implements PlaybackManager {
           callback: (fiber) => {
             // Gets the video element.
             const videoElement = ReactHelper.getNodeFromFiber(fiber) as HTMLVideoElement;
-
-            // Find the parent Polaris player.
-            const polarisVideo = ReactHelper.getParentByName(fiber, 'PolarisVideo');
-
-            if (polarisVideo && videoElement) {
-              // Add a few ticks to let Instagram create the audio indicators.
-              setTimeout(() => {
-                this.tryAttachPolarisVideo(polarisVideo, videoElement);
-              }, 100);
-            }
+            if (videoElement) this.attachWhenPlaced(fiber, videoElement);
           },
         });
       },
@@ -124,6 +148,27 @@ export class VideoDetector implements PlaybackManager {
     ReactDevTools.register(hook);
   }
 
+  // Instagram renders videos in a global container and portals them into the post afterwards, so the parent Polaris
+  // player is only reachable once the portal is placed. Retries for a short while until it is found.
+  private attachWhenPlaced(
+    videoFiber: ReactFiber,
+    videoElement: HTMLVideoElement,
+    attempt = 0,
+  ) {
+    // Also gives Instagram a few ticks to create the audio indicators.
+    setTimeout(() => {
+      const polarisVideo = ReactHelper.getParentByName(videoFiber, 'PolarisVideo');
+      if (polarisVideo) {
+        this.tryAttachPolarisVideo(polarisVideo, videoElement);
+        return;
+      }
+
+      if (attempt + 1 < ATTACH_MAX_ATTEMPTS) {
+        this.attachWhenPlaced(videoFiber, videoElement, attempt + 1);
+      }
+    }, ATTACH_RETRY_DELAY_MS);
+  }
+
   // Creates the video player from the given polaris player.
   public tryDetectVideoPlayer(
     polarisFiber: ReactFiber,
@@ -138,6 +183,12 @@ export class VideoDetector implements PlaybackManager {
     polarisFiber: ReactFiber,
     videoElement: HTMLVideoElement,
   ) {
+    // Settings and resources are required to build the controls.
+    if (!this.initialized) {
+      this.pendingVideos.push({ polarisFiber, videoElement });
+      return;
+    }
+
     const polarisElement = ReactHelper.getNodeFromFiber(polarisFiber);
     if (!polarisElement) {
       return;
@@ -164,6 +215,10 @@ export class VideoDetector implements PlaybackManager {
   }
 
   private tryDetachPolarisVideo(polarisFiber: ReactFiber) {
+    this.pendingVideos = this.pendingVideos.filter(
+      (pending) => pending.polarisFiber !== polarisFiber,
+    );
+
     const polarisElement = ReactHelper.getNodeFromFiber(polarisFiber);
     if (!polarisElement) {
       return;
@@ -358,6 +413,7 @@ export class VideoDetector implements PlaybackManager {
 
     this.settings.lastPlaybackVolume = volume;
     this.lastPlaybackMuted = muted;
+    this.sendMessageStoreSettings({ lastPlaybackVolume: volume });
 
     // Sync the volume across all other video players.
     this.updateVolumeForVideos();
@@ -369,6 +425,7 @@ export class VideoDetector implements PlaybackManager {
     if (!videoElement) return;
 
     this.settings.lastPlaybackSpeed = videoElement.playbackRate;
+    this.sendMessageStoreSettings({ lastPlaybackSpeed: videoElement.playbackRate });
 
     // Sync the speed across all other video players.
     this.updatePlaybackSpeedForVideos();

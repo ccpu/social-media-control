@@ -1,7 +1,7 @@
-import { Settings } from '@internal/core';
 import { mockBoundingRect } from '@internal/core/testing';
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ReelAdvancer } from '../src/reelAdvancer';
+import { facebookSettings } from '../src/settings';
 
 // Minimal extension storage so the settings can initialize.
 vi.stubGlobal('chrome', {
@@ -35,7 +35,7 @@ describe('reelAdvancer', () => {
   });
 
   beforeEach(() => {
-    Settings.shared.advanceOnVideoEnd = true;
+    facebookSettings.advanceOnVideoEnd = true;
     window.history.pushState({}, '', '/reel/1346514350800865');
   });
 
@@ -50,7 +50,7 @@ describe('reelAdvancer', () => {
   });
 
   it('does nothing when the setting is disabled', async () => {
-    Settings.shared.advanceOnVideoEnd = false;
+    facebookSettings.advanceOnVideoEnd = false;
     const { video, next } = createReel();
     const onClick = vi.fn();
     next.addEventListener('click', onClick);

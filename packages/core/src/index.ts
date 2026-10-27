@@ -6,4 +6,5 @@ export * from './urlPath';
 export * from './utils';
 export * from './videoAutoplayMode';
 export * from './videoControlMode';
+export * from './videoWheelSeek';
 export * from './viewport';

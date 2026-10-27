@@ -1,5 +1,5 @@
 import type { VideoControllerElement } from './elements/videoControllerElement';
-import { Settings } from '@internal/core';
+import { instagramSettings } from '../../settings';
 import { DownloadButton } from './elements/downloadButton';
 import { FullscreenButton } from './elements/fullscreenButton';
 import { MuteButton } from './elements/muteButton';
@@ -69,7 +69,7 @@ export class CustomVideoController extends VideoController {
    * Build the list of controls to spawn in the UI from the settings.
    */
   private getActiveControlElements(): VideoControllerElement[] {
-    const settings = Settings.shared;
+    const settings = instagramSettings;
     const controls = [];
 
     controls.push(new PlayButton(this));

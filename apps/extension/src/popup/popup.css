@@ -4,3 +4,16 @@
    when Tailwind is pointed at the installed packages. */
 @source '../../node_modules/@pixpilot/shadcn/dist';
 @source '../../node_modules/@pixpilot/shadcn-ui/dist';
+
+/* The popup window resizes to fit the document, and Radix Select closes on any
+   window resize. Opening a Select hides the body scrollbar, which would resize the
+   popup and close it immediately, so scroll inside #root instead of the body.
+   600px is the browser's maximum popup height. */
+body {
+  overflow: hidden;
+}
+
+#root {
+  max-height: 600px;
+  overflow-y: auto;
+}

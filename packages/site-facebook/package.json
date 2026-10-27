@@ -3,11 +3,12 @@
   "type": "module",
   "version": "0.1.0",
   "private": true,
-  "description": "Facebook support: auto-scroll in the Reels viewer.",
+  "description": "Facebook support: autoplay with audio, mouse-wheel seeking and auto-scroll in the Reels viewer.",
   "license": "MIT",
   "exports": {
     "./site": "./src/site.ts",
-    "./content": "./src/content.ts"
+    "./content": "./src/content.ts",
+    "./settings": "./src/settings.ts"
   },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist",

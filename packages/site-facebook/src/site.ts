@@ -1,6 +1,6 @@
 import type { SiteDefinition } from '@internal/core';
 
-// Facebook: auto-scroll in the Reels viewer.
+// Facebook: autoplay with audio, mouse-wheel seeking on the seek bar and auto-scroll in the Reels viewer.
 export const facebookSite: SiteDefinition = {
   id: 'facebook',
   matches: ['*://*.facebook.com/*'],

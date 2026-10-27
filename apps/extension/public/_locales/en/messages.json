@@ -8,11 +8,17 @@
   "settings": {
     "message": "Settings"
   },
+  "tab_instagram": {
+    "message": "Instagram"
+  },
+  "tab_facebook": {
+    "message": "Facebook"
+  },
   "control_settings": {
-    "message": "Video controls (Instagram)"
+    "message": "Video controls"
   },
   "playback_settings": {
-    "message": "Playback (Instagram)"
+    "message": "Playback"
   },
   "auto_scroll_settings": {
     "message": "Auto-scroll"
@@ -48,7 +54,7 @@
     "message": "Autoplay"
   },
   "option_autoplay_muted": {
-    "message": "Autoplay without audio (Instagram default)"
+    "message": "Autoplay without audio (site default)"
   },
   "option_autoplay_unmuted": {
     "message": "Autoplay with audio"
@@ -63,7 +69,7 @@
     "message": "Please allow autoplay with audio in your browser's website settings:"
   },
   "enable_autoplay_in_step_1": {
-    "message": "Goto Instagram.com."
+    "message": "Open the website."
   },
   "enable_autoplay_in_step_2": {
     "message": "Click the website settings icon in the url bar."
@@ -84,7 +90,10 @@
     "message": "Scroll to the next reel when playback ends"
   },
   "option_advance_on_video_end_hint": {
-    "message": "Works on Instagram Reels and Facebook Reels."
+    "message": "Works on Reels."
+  },
+  "option_seek_with_mouse_wheel": {
+    "message": "Seek with the mouse wheel over the seek bar"
   },
   "experimental_settings": {
     "message": "Experimental settings"

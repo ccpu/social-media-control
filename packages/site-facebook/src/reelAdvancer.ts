@@ -1,10 +1,11 @@
-import { Settings, Viewport } from '@internal/core';
+import { Viewport } from '@internal/core';
 import { ReelViewer } from './reelViewer';
+import { facebookSettings } from './settings';
 
 // Opens the next Facebook reel when the current one finishes playing.
 export class ReelAdvancer {
   // The extension settings.
-  private readonly settings = Settings.shared;
+  private readonly settings = facebookSettings;
 
   // Loads the settings and starts listening for finished videos.
   public async init(): Promise<void> {

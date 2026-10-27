@@ -1,8 +1,14 @@
 import type { ReactFiber } from '@internal/react-fiber';
 import type { VideoController } from './controller/videoController';
 import type { PlaybackManager } from './playbackManager';
-import { Settings, UrlPath, VideoAutoplayMode, VideoControlMode } from '@internal/core';
+import {
+  UrlPath,
+  VideoAutoplayMode,
+  VideoControlMode,
+  VideoWheelSeek,
+} from '@internal/core';
 import { ReactHelper } from '@internal/react-fiber';
+import { instagramSettings } from '../settings';
 import { CustomVideoController } from './controller/customVideoController';
 import { NativeVideoController } from './controller/nativeVideoController';
 import { VideoType } from './videoType';
@@ -196,20 +202,14 @@ export class VideoPlayer {
 
   // Seeks the video when the mouse wheel is used on the custom control bar.
   private onMouseWheel = (ev: WheelEvent) => {
+    if (!instagramSettings.seekWithMouseWheel) return;
     if (!this.isPointerOverCustomControls(ev.target)) return;
 
     const videoElement = this.videoElementRef?.deref();
-    if (!videoElement || !Number.isFinite(videoElement.duration)) return;
-    if (ev.deltaY === 0) return;
+    if (!videoElement || !VideoWheelSeek.seek(videoElement, ev)) return;
 
     ev.preventDefault();
     ev.stopPropagation();
-
-    const seekOffset = ev.deltaY > 0 ? -2 : 2;
-    videoElement.currentTime = Math.min(
-      Math.max(videoElement.currentTime + seekOffset, 0),
-      videoElement.duration,
-    );
   };
 
   // Returns whether an event target belongs to the extension's custom controls.
@@ -362,7 +362,7 @@ export class VideoPlayer {
 
   // Creates the video controls.
   private createVideoControl() {
-    switch (Settings.shared.videoControlMode) {
+    switch (instagramSettings.videoControlMode) {
       case VideoControlMode.native:
         this.videoController = new NativeVideoController(this);
         break;
@@ -408,7 +408,7 @@ export class VideoPlayer {
     if (!videoElement) return;
 
     if (
-      Settings.shared.autoplayMode === VideoAutoplayMode.stopped &&
+      instagramSettings.autoplayMode === VideoAutoplayMode.stopped &&
       !this.userInteractedWithVideo
     ) {
       videoElement.pause();
@@ -422,13 +422,13 @@ export class VideoPlayer {
     const videoElement = this.videoElementRef?.deref();
     if (!videoElement) return;
 
-    videoElement.loop = Settings.shared.loopPlayback && !this.shouldAdvanceOnVideoEnd();
+    videoElement.loop = instagramSettings.loopPlayback && !this.shouldAdvanceOnVideoEnd();
   }
 
   // Returns whether playback should move to the next video when it ends. Only the Reels page advances.
   private shouldAdvanceOnVideoEnd(): boolean {
     return (
-      Settings.shared.advanceOnVideoEnd &&
+      instagramSettings.advanceOnVideoEnd &&
       UrlPath.startsWithSegment(location.pathname, 'reels')
     );
   }

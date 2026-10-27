@@ -1,5 +1,5 @@
 import type { VideoPlayer } from '../videoPlayer';
-import { Settings } from '@internal/core';
+import { instagramSettings } from '../../settings';
 import { VideoType } from '../videoType';
 
 // Base class for video the different controllers.
@@ -161,7 +161,7 @@ export abstract class VideoController {
   }
 
   protected updateControlBarVisibility(): void {
-    const visibility = !Settings.shared.autoHideControlBar || this.hover;
+    const visibility = !instagramSettings.autoHideControlBar || this.hover;
     this.setVisibility(visibility);
   }
 

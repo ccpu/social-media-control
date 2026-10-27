@@ -20,12 +20,22 @@ export interface SettingsData {
   autoHideControlBar: boolean;
   loopPlayback: boolean;
   advanceOnVideoEnd: boolean;
+  seekWithMouseWheel: boolean;
 }
 
-// Handle extension settings.
+// Names of the settings holding a value of the given type.
+export type SettingName<T> = {
+  [K in keyof SettingsData]: SettingsData[K] extends T ? K : never;
+}[keyof SettingsData];
+
+// Handle extension settings. Every site has its own instance, stored under its own key prefix.
 export class Settings implements SettingsData {
-  // The shares setting instance.
-  public static shared: Settings = new Settings();
+  // Prefix of the storage keys, e.g. `instagram.`.
+  private readonly storagePrefix: string;
+
+  public constructor(siteId: string) {
+    this.storagePrefix = `${siteId}.`;
+  }
 
   // #region Data
 
@@ -43,6 +53,7 @@ export class Settings implements SettingsData {
     autoHideControlBar: false,
     loopPlayback: true,
     advanceOnVideoEnd: false,
+    seekWithMouseWheel: true,
   };
 
   // The video control mode
@@ -189,6 +200,23 @@ export class Settings implements SettingsData {
     this.onChange('advanceOnVideoEnd');
   }
 
+  // If enabled, the mouse wheel seeks the video while the pointer is over the seek bar.
+  public get seekWithMouseWheel(): boolean {
+    return this.data.seekWithMouseWheel;
+  }
+
+  public set seekWithMouseWheel(value: boolean) {
+    if (this.data.seekWithMouseWheel === value) return;
+    this.data.seekWithMouseWheel = value;
+
+    this.onChange('seekWithMouseWheel');
+  }
+
+  // Sets a setting by name.
+  public set<K extends keyof SettingsData>(name: K, value: SettingsData[K]): void {
+    (this as SettingsData)[name] = value;
+  }
+
   // #endregion Data
 
   // #region Init
@@ -225,16 +253,22 @@ export class Settings implements SettingsData {
     if (!this.initialized) return;
 
     // Write changes to storage.
-    const change: { [p: string]: unknown } = {};
-    change[name] = this[name];
-    Browser.storage.sync.set(change).then();
+    Browser.storage.sync.set({ [this.storagePrefix + name]: this[name] }).then();
   }
 
-  // Loads the volume settings from storage.
+  // Loads the settings from storage. Settings stored before they were split by site have no prefix; they are used
+  // until the site stores its own value.
   private async load() {
     const names = Object.keys(this.data);
-    const data = await Browser.storage.sync.get(names);
-    this.storeValues(data);
+    const data = await Browser.storage.sync.get([
+      ...names,
+      ...names.map((name) => this.storagePrefix + name),
+    ]);
+    this.storeValues(
+      Object.fromEntries(
+        names.map((name) => [name, data[this.storagePrefix + name] ?? data[name]]),
+      ),
+    );
   }
 
   // Event that is called whenever settings were changed from the storage.
@@ -244,9 +278,15 @@ export class Settings implements SettingsData {
   ) {
     if (area !== 'sync') return;
 
-    // Converts the change structure to a simple key-value pair.
+    // Converts the changes of this site to a simple key-value pair.
     const data = Utils.mapObject(changes, (change) => change.newValue);
-    this.storeValues(data);
+    this.storeValues(
+      Object.fromEntries(
+        Object.entries(data)
+          .filter(([key]) => key.startsWith(this.storagePrefix))
+          .map(([key, value]) => [key.slice(this.storagePrefix.length), value]),
+      ),
+    );
   }
 
   // Stores the data in the settings.
@@ -286,6 +326,9 @@ export class Settings implements SettingsData {
     }
     if (typeof data.advanceOnVideoEnd === 'boolean') {
       this.advanceOnVideoEnd = data.advanceOnVideoEnd;
+    }
+    if (typeof data.seekWithMouseWheel === 'boolean') {
+      this.seekWithMouseWheel = data.seekWithMouseWheel;
     }
   }
 
