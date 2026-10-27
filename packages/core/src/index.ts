@@ -1,5 +1,6 @@
 export * from './browser';
 export * from './eventDispatcher';
+export * from './seekBarWheel';
 export * from './settings';
 export * from './siteDefinition';
 export * from './urlPath';

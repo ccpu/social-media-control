@@ -26,6 +26,7 @@
     "@internal/core": "workspace:*",
     "@internal/site-facebook": "workspace:*",
     "@internal/site-instagram": "workspace:*",
+    "@internal/site-youtube": "workspace:*",
     "@internal/tailwind": "workspace:*",
     "@pixpilot/shadcn": "catalog:prod",
     "@pixpilot/shadcn-ui": "catalog:prod",

@@ -1,6 +1,6 @@
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SeekBarWheel } from '../src/seekBarWheel';
-import { facebookSettings } from '../src/settings';
+import { Settings } from '../src/settings';
 
 // Minimal extension storage so the settings can initialize.
 vi.stubGlobal('chrome', {
@@ -9,6 +9,8 @@ vi.stubGlobal('chrome', {
     onChanged: { addListener: () => undefined },
   },
 });
+
+const settings = new Settings('test');
 
 // A player with a video, a seek bar and a volume slider, like Facebook renders it.
 function createPlayer(seekBarLabel = 'Change Position') {
@@ -43,11 +45,11 @@ function wheel(target: Element, deltaY: number): WheelEvent {
 
 describe('seekBarWheel', () => {
   beforeAll(async () => {
-    await new SeekBarWheel().init();
+    await new SeekBarWheel(settings, { labels: ['Change Position'] }).init();
   });
 
   beforeEach(() => {
-    facebookSettings.seekWithMouseWheel = true;
+    settings.seekWithMouseWheel = true;
   });
 
   it('skips ahead when scrolling up over the seek bar', () => {
@@ -77,7 +79,7 @@ describe('seekBarWheel', () => {
 
   it('does nothing when disabled', () => {
     const { video, seekBar } = createPlayer();
-    facebookSettings.seekWithMouseWheel = false;
+    settings.seekWithMouseWheel = false;
 
     const ev = wheel(seekBar, -100);
 
@@ -92,5 +94,23 @@ describe('seekBarWheel', () => {
 
     expect(video.currentTime).toBe(100);
     expect(ev.defaultPrevented).toBe(false);
+  });
+});
+
+describe('seekBarWheel with a selector', () => {
+  const selectorSettings = new Settings('selector-test');
+
+  beforeAll(async () => {
+    await new SeekBarWheel(selectorSettings, { selector: '.seek-bar' }).init();
+  });
+
+  it('seeks on the matching element, whatever its range', () => {
+    const { video, seekBar } = createPlayer('Seek slider');
+    seekBar.classList.add('seek-bar');
+    seekBar.setAttribute('aria-valuemax', '100');
+
+    wheel(seekBar, -100);
+
+    expect(video.currentTime).toBe(102);
   });
 });

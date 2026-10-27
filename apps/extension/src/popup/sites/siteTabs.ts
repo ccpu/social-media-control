@@ -2,9 +2,11 @@ import type { Settings } from '@internal/core';
 import type { ComponentType } from 'react';
 import { facebookSettings } from '@internal/site-facebook/settings';
 import { instagramSettings } from '@internal/site-instagram/settings';
+import { youtubeSettings } from '@internal/site-youtube/settings';
 
 import { FacebookSettings } from './FacebookSettings';
 import { InstagramSettings } from './InstagramSettings';
+import { YoutubeSettings } from './YoutubeSettings';
 
 export interface SiteTab {
   id: string;
@@ -28,5 +30,11 @@ export const siteTabs: SiteTab[] = [
     label: 'tab_facebook',
     settings: facebookSettings,
     content: FacebookSettings,
+  },
+  {
+    id: 'youtube',
+    label: 'tab_youtube',
+    settings: youtubeSettings,
+    content: YoutubeSettings,
   },
 ];
