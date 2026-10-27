@@ -1,7 +1,9 @@
-import { VideoAutoplayMode } from '@internal/core';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import { facebookSettings } from '../src/settings';
+import { Settings } from '../src/settings';
 import { VideoAudio } from '../src/videoAudio';
+import { VideoAutoplayMode } from '../src/videoAutoplayMode';
+
+const settings = new Settings('test');
 
 // Minimal extension storage so the settings can initialize.
 vi.stubGlobal('chrome', {
@@ -26,7 +28,7 @@ vi.stubGlobal(
   },
 );
 
-// A playing Facebook video with its volume slider and mute button.
+// A playing video with its volume slider and mute button, like Facebook renders it.
 function createPlayer() {
   const player = document.createElement('div');
   const video = document.createElement('video');
@@ -40,8 +42,8 @@ function createPlayer() {
   return { video, volumeSlider, muteButton };
 }
 
-// Facebook starts the video and resets it to muted at full volume.
-function facebookPlays(video: HTMLVideoElement) {
+// The site starts the video and resets it to muted at full volume.
+function sitePlays(video: HTMLVideoElement) {
   video.dispatchEvent(new Event('play'));
   Object.assign(video, { muted: true, volume: 1 });
   video.dispatchEvent(new Event('volumechange'));
@@ -63,17 +65,17 @@ function userChanges(
 
 describe('videoAudio', () => {
   beforeAll(async () => {
-    await new VideoAudio().init();
+    await new VideoAudio(settings).init();
   });
 
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'performance'] });
     document.body.innerHTML = '';
     userInteracted = true;
-    facebookSettings.lastPlaybackVolume = 0;
+    settings.lastPlaybackVolume = 0;
     // Starts every test with the audio wanted by the setting.
-    facebookSettings.autoplayMode = VideoAutoplayMode.muted;
-    facebookSettings.autoplayMode = VideoAutoplayMode.unmuted;
+    settings.autoplayMode = VideoAutoplayMode.muted;
+    settings.autoplayMode = VideoAutoplayMode.unmuted;
   });
 
   afterEach(() => {
@@ -83,58 +85,58 @@ describe('videoAudio', () => {
   it('plays with audio when autoplay with audio is selected', () => {
     const { video } = createPlayer();
 
-    facebookPlays(video);
+    sitePlays(video);
 
     expect(video.muted).toBe(false);
   });
 
-  it('keeps Facebook muted by default', () => {
-    facebookSettings.autoplayMode = VideoAutoplayMode.muted;
+  it('keeps the site muted by default', () => {
+    settings.autoplayMode = VideoAutoplayMode.muted;
     const { video } = createPlayer();
 
-    facebookPlays(video);
+    sitePlays(video);
 
     expect(video.muted).toBe(true);
   });
 
-  it('applies the remembered volume again after Facebook resets it', () => {
-    facebookSettings.lastPlaybackVolume = 0.4;
+  it('applies the remembered volume again after the site resets it', () => {
+    settings.lastPlaybackVolume = 0.4;
     const { video } = createPlayer();
 
-    facebookPlays(video);
+    sitePlays(video);
 
     expect(video.volume).toBe(0.4);
   });
 
   it('remembers the volume set with the volume slider', () => {
     const { video, volumeSlider } = createPlayer();
-    facebookPlays(video);
+    sitePlays(video);
 
     userChanges(volumeSlider, video, { volume: 0.3 });
-    facebookPlays(video);
+    sitePlays(video);
 
-    expect(facebookSettings.lastPlaybackVolume).toBe(0.3);
+    expect(settings.lastPlaybackVolume).toBe(0.3);
     expect(video.volume).toBe(0.3);
   });
 
   it('keeps the audio the user chose', () => {
     const { video, muteButton } = createPlayer();
-    facebookPlays(video);
+    sitePlays(video);
 
     userChanges(muteButton, video, { muted: true });
-    facebookPlays(video);
+    sitePlays(video);
     expect(video.muted).toBe(true);
 
     userChanges(muteButton, video, { muted: false });
-    facebookPlays(video);
+    sitePlays(video);
     expect(video.muted).toBe(false);
   });
 
-  it('takes the reset after the user clicked play as Facebook change', () => {
+  it('takes the reset after the user clicked play as change of the site', () => {
     const { video, muteButton } = createPlayer();
 
     muteButton.dispatchEvent(new Event('pointerdown', { bubbles: true }));
-    facebookPlays(video);
+    sitePlays(video);
 
     expect(video.muted).toBe(false);
   });
@@ -142,7 +144,7 @@ describe('videoAudio', () => {
   it('unmutes on the first user interaction when the browser did not allow audio yet', () => {
     userInteracted = false;
     const { video } = createPlayer();
-    facebookPlays(video);
+    sitePlays(video);
     expect(video.muted).toBe(true);
 
     userInteracted = true;

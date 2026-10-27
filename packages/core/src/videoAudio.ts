@@ -1,28 +1,32 @@
-import { VideoAutoplayMode } from '@internal/core';
-import { facebookSettings } from './settings';
+import type { Settings } from './settings';
+import { Slider } from './slider';
+import { VideoAutoplayMode } from './videoAutoplayMode';
 
 // How long after a click or key press a volume change still counts as made by the user.
 const userInputMs = 500;
 
-// Facebook resets the sound right after playback starts, also when the user clicked play. Changes within this time are
-// Facebook's.
-const facebookResetMs = 200;
+// Sites reset the sound right after playback starts, also when the user clicked play. Changes within this time are
+// the site's.
+const playResetMs = 200;
 
 // Delay before storing the volume. Dragging the volume slider fires many changes and `storage.sync` limits the number
 // of writes per minute.
 const storeVolumeDelayMs = 500;
 
-// The last click or key press, to tell the user's volume changes from Facebook's.
+// The last click or key press, to tell the user's volume changes from the site's.
 interface UserInput {
   target: Element;
   // Changes until this time count as the user's. A pressed pointer counts until it is released.
   until: number;
 }
 
-// Keeps the sound of Facebook videos the way the user wants it: the last used volume, and with audio when autoplay with
-// audio is selected. Facebook starts every video muted at full volume and resets both whenever playback starts, so the
-// user's choice is applied again after every change Facebook makes on its own.
+// Keeps the sound of a site's videos the way the user wants it: the last used volume, and with audio when autoplay with
+// audio is selected. Sites like Facebook and X start every video muted and reset the sound whenever playback starts, so
+// the user's choice is applied again after every change the site makes on its own.
 export class VideoAudio {
+  // The settings of the site.
+  private readonly settings: Settings;
+
   // Should videos play with audio? Follows the autoplay setting and the user muting or unmuting a video.
   private wantsAudio = false;
 
@@ -39,14 +43,18 @@ export class VideoAudio {
 
   private storeVolumeTimerId: ReturnType<typeof setTimeout> | undefined;
 
+  public constructor(settings: Settings) {
+    this.settings = settings;
+  }
+
   // Loads the settings and starts listening for playback, volume changes and user input.
   public async init(): Promise<void> {
-    await facebookSettings.init();
+    await this.settings.init();
 
-    this.wantsAudio = facebookSettings.autoplayMode === VideoAutoplayMode.unmuted;
-    facebookSettings.changed.subscribe((name) => {
+    this.wantsAudio = this.settings.autoplayMode === VideoAutoplayMode.unmuted;
+    this.settings.changed.subscribe((name) => {
       if (name === 'autoplayMode') {
-        this.wantsAudio = facebookSettings.autoplayMode === VideoAutoplayMode.unmuted;
+        this.wantsAudio = this.settings.autoplayMode === VideoAutoplayMode.unmuted;
       }
     });
 
@@ -72,8 +80,8 @@ export class VideoAudio {
 
     const playStartTime = this.playStartTimes.get(videoElement) ?? -Infinity;
     const input = this.userInputOn(videoElement);
-    if (!input || performance.now() - playStartTime < facebookResetMs) {
-      // Changed by Facebook.
+    if (!input || performance.now() - playStartTime < playResetMs) {
+      // Changed by the site.
       this.apply(videoElement);
       return;
     }
@@ -101,8 +109,8 @@ export class VideoAudio {
 
   // Applies the wanted volume and audio to the video.
   private apply(videoElement: HTMLVideoElement) {
-    const volume = facebookSettings.lastPlaybackVolume;
-    // Nothing stored yet, Facebook's volume is used.
+    const volume = this.settings.lastPlaybackVolume;
+    // Nothing stored yet, the site's volume is used.
     if (volume > 0 && videoElement.volume !== volume) {
       // eslint-disable-next-line no-param-reassign -- Applying the sound to the given video is the purpose of this method.
       videoElement.volume = volume;
@@ -141,13 +149,14 @@ export class VideoAudio {
   private storeVolume(volume: number) {
     clearTimeout(this.storeVolumeTimerId);
     this.storeVolumeTimerId = setTimeout(() => {
-      facebookSettings.lastPlaybackVolume = volume;
+      this.settings.lastPlaybackVolume = volume;
     }, storeVolumeDelayMs);
   }
 
   // The volume slider ranges from 0 to 1. The seek bar ranges over the video duration in seconds.
   private static isVolumeSlider(element: Element): boolean {
-    return element.closest('[role="slider"]')?.getAttribute('aria-valuemax') === '1';
+    const slider = Slider.closest(element);
+    return slider !== null && Slider.max(slider) === 1;
   }
 
   // Audio may play after the user interacted with the page, or anytime when the site has the permission.

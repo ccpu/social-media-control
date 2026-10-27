@@ -153,6 +153,9 @@ importers:
       '@internal/site-instagram':
         specifier: workspace:*
         version: link:../../packages/site-instagram
+      '@internal/site-x':
+        specifier: workspace:*
+        version: link:../../packages/site-x
       '@internal/site-youtube':
         specifier: workspace:*
         version: link:../../packages/site-youtube
@@ -387,6 +390,49 @@ importers:
       eslint:
         specifier: catalog:dev
         version: 9.37.0(jiti@2.7.0)
+      prettier:
+        specifier: catalog:dev
+        version: 3.6.2
+      typescript:
+        specifier: catalog:dev
+        version: 5.9.3
+      vitest:
+        specifier: catalog:dev
+        version: 3.2.4(@types/debug@4.1.12)(@types/node@26.6.2)(@vitest/ui@3.2.4)(jiti@2.7.0)(jsdom@26.1.0)(lightningcss@1.32.0)(tsx@4.20.6)(yaml@2.9.1)
+
+  packages/site-x:
+    dependencies:
+      '@internal/core':
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      '@internal/eslint-config':
+        specifier: workspace:*
+        version: link:../../tooling/eslint
+      '@internal/prettier-config':
+        specifier: workspace:*
+        version: link:../../tooling/prettier
+      '@internal/tsconfig':
+        specifier: workspace:*
+        version: link:../../tooling/typescript
+      '@internal/vitest-config':
+        specifier: workspace:*
+        version: link:../../tooling/vitest
+      '@testing-library/jest-dom':
+        specifier: catalog:dev
+        version: 6.9.1
+      '@types/chrome':
+        specifier: catalog:dev
+        version: 0.1.22
+      '@types/firefox-webext-browser':
+        specifier: catalog:dev
+        version: 120.0.5
+      eslint:
+        specifier: catalog:dev
+        version: 9.37.0(jiti@2.7.0)
+      jsdom:
+        specifier: ^26.1.0
+        version: 26.1.0
       prettier:
         specifier: catalog:dev
         version: 3.6.2

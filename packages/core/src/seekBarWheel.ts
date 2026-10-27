@@ -1,9 +1,10 @@
 import type { Settings } from './settings';
+import { Slider } from './slider';
 import { VideoWheelSeek } from './videoWheelSeek';
 
 // How to find the seek bar of a site.
 export interface SeekBarMatcher {
-  // Selector of the seek bar. Without it, any slider is checked by its label and range.
+  // Selector of the seek bar. Without it, every slider is checked by its label and range.
   selector?: string;
 
   // Accessible names of the seek bar. Sites localize this label, so the seek bar is also found by its range.
@@ -34,9 +35,9 @@ export class SeekBarWheel {
     if (!this.settings.seekWithMouseWheel) return;
     if (!(ev.target instanceof Element)) return;
 
-    const slider = ev.target.closest<HTMLElement>(
-      this.seekBar.selector ?? '[role="slider"]',
-    );
+    const slider = this.seekBar.selector
+      ? ev.target.closest<HTMLElement>(this.seekBar.selector)
+      : Slider.closest(ev.target);
     if (!slider) return;
 
     const videoElement = SeekBarWheel.findVideo(slider);
@@ -64,7 +65,7 @@ export class SeekBarWheel {
     if (this.seekBar.labels?.includes(slider.getAttribute('aria-label') ?? ''))
       return true;
 
-    const max = Number(slider.getAttribute('aria-valuemax'));
+    const max = Slider.max(slider);
     return max > 1 && Math.abs(max - videoElement.duration) <= 1;
   }
 }

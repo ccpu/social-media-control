@@ -1,7 +1,7 @@
 import { Browser, VideoAutoplayMode, VideoControlMode } from '@internal/core';
 
-import { AutoplaySetting } from '../components/AutoplaySetting';
 import { AutoScrollSection } from '../components/AutoScrollSection';
+import { PlaybackSection } from '../components/PlaybackSection';
 import { SettingSelect } from '../components/SettingSelect';
 import { SettingsSection } from '../components/SettingsSection';
 import { SettingSwitch } from '../components/SettingSwitch';
@@ -40,11 +40,9 @@ export function InstagramSettings() {
         <SettingSwitch name="showDownloadButton" label="option_show_download" />
       </SettingsSection>
 
-      <SettingsSection title="playback_settings">
-        <AutoplaySetting modes={Object.values(VideoAutoplayMode)} />
+      <PlaybackSection autoplayModes={Object.values(VideoAutoplayMode)}>
         <SettingSwitch name="loopPlayback" label="option_loop_playback" />
-        <SettingSwitch name="seekWithMouseWheel" label="option_seek_with_mouse_wheel" />
-      </SettingsSection>
+      </PlaybackSection>
 
       <AutoScrollSection />
     </>

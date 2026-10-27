@@ -3,7 +3,7 @@
     "message": "Social Media Control"
   },
   "extension_description": {
-    "message": "Adds video controls, mouse-wheel seeking and auto-scroll to Instagram, Facebook and YouTube."
+    "message": "Adds video controls, mouse-wheel seeking and auto-scroll to Instagram, Facebook, YouTube and X."
   },
   "settings": {
     "message": "Settings"
@@ -16,6 +16,9 @@
   },
   "tab_youtube": {
     "message": "YouTube"
+  },
+  "tab_x": {
+    "message": "X"
   },
   "control_settings": {
     "message": "Video controls"

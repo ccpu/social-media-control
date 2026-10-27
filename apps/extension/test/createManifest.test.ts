@@ -86,7 +86,12 @@ describe('createManifest', () => {
     );
 
     expect(new Set(matches)).toEqual(
-      new Set(['*://*.instagram.com/*', '*://*.facebook.com/*', '*://*.youtube.com/*']),
+      new Set([
+        '*://*.instagram.com/*',
+        '*://*.facebook.com/*',
+        '*://*.youtube.com/*',
+        '*://*.x.com/*',
+      ]),
     );
   });
 });

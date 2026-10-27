@@ -114,3 +114,45 @@ describe('seekBarWheel with a selector', () => {
     expect(video.currentTime).toBe(102);
   });
 });
+
+describe('seekBarWheel with a Base UI slider', () => {
+  const baseUiSettings = new Settings('base-ui-test');
+
+  beforeAll(async () => {
+    await new SeekBarWheel(baseUiSettings, {}).init();
+  });
+
+  // Only this suite's instance seeks.
+  beforeEach(() => {
+    settings.seekWithMouseWheel = false;
+  });
+
+  // A seek bar like X renders it: a group with a hidden range input and a separate track element.
+  function createBaseUiPlayer() {
+    document.body.innerHTML = '';
+    const player = document.createElement('div');
+    const video = document.createElement('video');
+    Object.defineProperty(video, 'duration', { value: 298 });
+    video.currentTime = 100;
+
+    const seekBar = document.createElement('div');
+    seekBar.setAttribute('role', 'group');
+    const input = document.createElement('input');
+    input.type = 'range';
+    input.max = '298';
+    const track = document.createElement('div');
+    seekBar.append(input, track);
+
+    player.append(video, seekBar);
+    document.body.append(player);
+    return { video, track };
+  }
+
+  it('finds the seek bar by the range of its input', () => {
+    const { video, track } = createBaseUiPlayer();
+
+    wheel(track, -100);
+
+    expect(video.currentTime).toBe(102);
+  });
+});
